@@ -23,6 +23,10 @@
   /* выше установили ограничения для секции */
 }
 
+.header__link{
+  text-decoration: none;
+}
+
 .logo{
   width: 228px;
   height: 32px;
