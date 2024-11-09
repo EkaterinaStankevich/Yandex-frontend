@@ -1,0 +1,17 @@
+.header__lang-link {
+    font-size: 1.5rem;
+    line-height: 1.15;
+    font-weight: 400;
+    color: #FFFFFF;
+    text-decoration: none;
+    margin-left: 18px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .header__lang-link {
+        font-size: 1.125rem;
+        line-height: 1.2;
+    }
+  }
