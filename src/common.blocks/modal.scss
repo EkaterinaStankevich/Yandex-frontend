@@ -4,7 +4,8 @@
 .modal {
   @include mixins.sublayer;
   // height: max-content;
-  position: absolute;
+  position: fixed;
+  overflow-y: auto;
   display: none;
   justify-content: center;
   background-color: $overlayBackground;
