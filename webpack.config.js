@@ -1,63 +1,95 @@
 const path = require('path');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  entry: {
-    main: './src/components/index.js'
-  },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js',
-    publicPath: '',
-  },
-  mode: 'development',
-  devServer: {
-    static: path.resolve(__dirname, './dist'),
-    open: true,
-    compress: true,
-    port: 8080
-  },
+  entry: path.resolve(__dirname, './src/index.tsx'),
+  devtool: 'eval-source-map',
   module: {
-    rules: [{
-        test: /\.js$/,
-        use: 'babel-loader',
-        exclude: '/node_modules/'
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader']
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/,
-        type: 'asset/resource',
-        generator: {
-            filename: 'images/[name].[hash][ext]',
+        test: /\.(ts)x?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader'
         }
-    },
-    {
-      test: /\.(woff|woff2|eot|ttf|otf)$/i,
-      type: 'asset/resource',
-      generator: {
-        filename: 'fonts/[name].[hash][ext]',
-      }
-    },
+      },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, {
+        exclude: /\.module\.css$/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.module\.css$/i,
+        exclude: /node_modules/,
+        use: [
+          'style-loader',
+          {
             loader: 'css-loader',
             options: {
-              importLoaders: 1
+              modules: true
             }
-          },
-          'postcss-loader'
+          }
         ]
       },
+      {
+        test: /\.(jpg|jpeg|png|svg)$/,
+        type: 'asset/resource'
+      },
+      {
+        test: /\.(woff|woff2)$/,
+        type: 'asset/resource'
+      }
     ]
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: './src/index.html'
+    new ESLintPlugin({
+      extensions: ['.js', '.jsx', '.ts', '.tsx']
     }),
-    new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin(),
-
-  ]
+    new HtmlWebpackPlugin({
+      template: './public/index.html'
+    }),
+    new Dotenv()
+  ],
+  resolve: {
+    extensions: [
+      '*',
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.json',
+      '.css',
+      '.scss',
+      '.png',
+      '.svg',
+      '.jpg'
+    ],
+    alias: {
+      '@pages': path.resolve(__dirname, './src/pages'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@ui': path.resolve(__dirname, './src/components/ui'),
+      '@ui-pages': path.resolve(__dirname, './src/components/ui/pages'),
+      '@utils-types': path.resolve(__dirname, './src/utils/types'),
+      '@api': path.resolve(__dirname, './src/utils/burger-api.ts'),
+      '@slices': path.resolve(__dirname, './src/services/slices'),
+      '@selectors': path.resolve(__dirname, './src/services/selectors')
+    }
+  },
+  output: {
+    path: path.resolve(__dirname, './dist'),
+    filename: 'bundle.js'
+  },
+  devServer: {
+    static: path.join(__dirname, './dist'),
+    compress: true,
+    historyApiFallback: true,
+    port: 4000
+  }
 };
